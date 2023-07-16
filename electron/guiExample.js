@@ -49,7 +49,7 @@ const startCodeFunction = () => {
 };
 
 const sendCodeFunction = () => {
-  const stringToSend = document.getElementById("string_to_send").value;
+  const stringToSend = document.getElementById("message_text").value;
   printBoth(`Sending "${stringToSend}" to program`);
   sendToProgram(stringToSend);
 };
@@ -75,15 +75,9 @@ document.addEventListener("DOMContentLoaded", () => {
     .getElementById("start_code")
     .addEventListener("click", startCodeFunction);
   document
-    .getElementById("send_code")
+    .getElementById("send_text")
     .addEventListener("click", sendCodeFunction);
   document
     .getElementById("stop_code")
     .addEventListener("click", stopCodeFunction);
-  document
-    .getElementById("open_file_sync")
-    .addEventListener("click", openFileFunctionSync);
-  document
-    .getElementById("open_file_async")
-    .addEventListener("click", openFileFunctionAsync);
 });

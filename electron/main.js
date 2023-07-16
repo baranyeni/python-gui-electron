@@ -12,7 +12,6 @@ function printBoth(str) {
   myConsole.log("main.js:    " + str);
 }
 
-// Create the browser window.
 function createWindow() {
   const mainWindow = new BrowserWindow({
     fullscreen: true,
@@ -21,14 +20,11 @@ function createWindow() {
       preload: path.join(__dirname, "guiExample.js"),
       contextIsolation: true,
       nodeIntegration: true,
-      devTools: false,
+      //devTools: false,
     },
   });
 
-  // Load the index.html of the app.
   mainWindow.loadFile(path.join(__dirname, "guiExample.html"));
-
-  // Open the DevTools.
   mainWindow.webContents.openDevTools();
 }
 
