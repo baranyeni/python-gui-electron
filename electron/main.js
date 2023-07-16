@@ -15,13 +15,13 @@ function printBoth(str) {
 // Create the browser window.
 function createWindow() {
   const mainWindow = new BrowserWindow({
-    width: 990,
-    height: 600,
+    fullscreen: true,
     resizable: true,
     webPreferences: {
       preload: path.join(__dirname, "guiExample.js"),
       contextIsolation: true,
       nodeIntegration: true,
+      devTools: false,
     },
   });
 
@@ -31,6 +31,10 @@ function createWindow() {
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
 }
+
+try {
+  require('electron-reloader')(module)
+} catch (_) {}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
