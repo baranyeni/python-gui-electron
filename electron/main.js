@@ -62,28 +62,3 @@ ipcMain.on("execute", (command) => {
     }
   });
 });
-
-ipcMain.on("open_json_file_sync", () => {
-  const fs = require("fs");
-
-  fs.readFile("config.json", function (err, data) {
-    if (err) {
-      return console.error(err);
-    }
-    printBoth("Called through ipc.send from guiExample.js");
-    printBoth("Asynchronous read: " + data.toString());
-  });
-});
-
-ipcMain.on("open_json_file_async", () => {
-  const fs = require("fs");
-
-  const fileName = "./config.json";
-  const data = fs.readFileSync(fileName);
-  const json = JSON.parse(data);
-
-  printBoth("Called through ipc.send from guiExample.js");
-  printBoth(
-    `Data from config.json:\nA_MODE = ${json.A_MODE}\nB_MODE = ${json.B_MODE}\nC_MODE = ${json.C_MODE}\nD_MODE = ${json.D_MODE}`
-  );
-});

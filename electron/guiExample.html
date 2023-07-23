@@ -13,12 +13,21 @@
   <body>
     <div class="container">
       <div class="column">
-        <textarea id="message_text" placeholder="WhatsApp mesajlarını girin;"></textarea>
+        <textarea id="message_text" placeholder="WhatsApp mesajlarını girin;">
+        </textarea>
+        <select name="delivery_address" id="delivery_address">
+          <option value="MIGROS">MIGROS</option>
+          <option value="OPTIMUM">OPTIMUM</option>
+          <option value="SETCARD">SETCARD</option>
+          <option value="D">D</option>
+          <option value="E">E</option>
+        </select>
+        <button id="parse_messages">Siparişleri listele</button>
+        <button id="print_orders">Siparişleri yazdır</button>
       </div>
       <div class="column">
-        <button id="start_code">Launch program</button>
-        <button id="send_text">Launch program</button>
-
+        <div id="order_list">
+        </div>
       </div>
     </div>
   </body>
