@@ -1,12 +1,20 @@
 {
-    "name": "python-electron-gui",
+    "name": "fis-yazdir-app",
+    "productName": "Fiş Yazdır",
     "version": "0.1.0",
     "main": "./electron/main.js",
     "scripts": {
-        "start": "electron ."
+        "start": "electron .",
+        "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --extra-resource=./python/parser.py --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
+        "package-win": "electron-packager . --overwrite --asar=true --platform=win32 --arch=ia32 --extra-resource=./python/parser.py --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Fiş Yazdır\"",
+        "package-linux": "electron-packager . --overwrite --asar=true --platform=linux --arch=x64 --extra-resource=./python/ --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds"
     },
     "devDependencies": {
-        "electron": "^23.3.10",
+        "electron": "^22.3.18",
+        "electron-packager": "^17.1.1",
         "electron-reloader": "^1.2.3"
+    },
+    "build": {
+        "extraResources": "python"
     }
 }

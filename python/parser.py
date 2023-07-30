@@ -1,5 +1,4 @@
-import os
-import sys
+import os, sys, atexit
 from whatstk import WhatsAppChat
 import tempfile
 import json
@@ -37,7 +36,7 @@ def parse_whatsapp_chat(text):
     formatted = {}
     for username in output.keys():
         formatted[username] = {
-            'DELIVERY_ADDRESS': DELIVERY_ADDRESS,
+            'delivery_address': DELIVERY_ADDRESS,
             "messages": []
         }
         for i, message in enumerate(output[username], 1):
@@ -48,15 +47,22 @@ def parse_whatsapp_chat(text):
     return json.dumps(formatted)
 
 
+def cleanup():
+    global printer_object
+    print_info("Closing..")
+    printer_object.close()
+
+
+atexit.register(cleanup)
 print_info("Script started")
 raw_data = ""
 while True:
     line = sys.stdin.readline().strip()
 
-    if line != "@@END@@":
+    if line != "@@END@@" and line != "terminate":
         raw_data += line
     else:
-        if raw_data == "terminate":
+        if line == "terminate":
             print_info('I got a terminate request from electron (js)...terminating')
             exit(0)
         else:
@@ -65,6 +71,5 @@ while True:
                 print(formatted_messages, flush=True)
             except Exception as e:
                 print_info('Error: ' + str(e))
-        raw_data = ""
-        exit(0)
-
+            finally:
+                raw_data = ""

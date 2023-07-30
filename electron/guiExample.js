@@ -1,48 +1,46 @@
 const { exec } = require("child_process");
 const nodeConsole = require("console");
-const { ipcRenderer } = require("electron");
 
 const terminalConsole = new nodeConsole.Console(process.stdout, process.stderr);
-let child;
-let printerScript;
+let parserScript = null;
+let printerScript = null;
 let parsed_messages = "";
 
-ipcRenderer.send("run-command", "ls");
-ipcRenderer.on("run-command-result", (event, result) => {
-  if (result.error) {
-    console.error("Error:", result.error);
-  } else {
-    console.log("Output:", result.output);
+const printBoth = (text) => {
+  if (text.includes("Access denied (insufficient permissions)")) {
+    alert("Yazıcıyı ve programı yeniden başlatın.")
   }
-});
-
-const printBoth = (str) => {
-  console.log(`Javascript: ${str}`);
-  terminalConsole.log(`Javascript: ${str}`);
+  console.log (243, text)
+  console.log(`Javascript: ${text}`);
+  terminalConsole.log(`Javascript: ${text}`);
 };
 
-const sendToProgram = (str) => {
-  child.stdin.write(`${str}\n@@END@@\n`);
+const sendToParser = (str) => {
+  parserScript.stdin.write(`${str}\n@@END@@\n`);
 
-  child.stdout.on("data", (data) => {
-    if (data.toString().includes("Python    : ")) {
-      return
-    }
+  parserScript.stdout.on("data", (data) => {
+    if (data.toString().includes("Python    : ")) { return printBoth("From python: ", data) }
 
     parsed_messages = JSON.parse(data.toString('utf8'));
+    updateCount();
     document.getElementById("order_list").innerHTML = "";
 
     Object.keys(parsed_messages).forEach((username) => {
-      console.log (parsed_messages[username]);
-      document.getElementById("order_list").innerHTML += `<div class="order">
+      document.getElementById("order_list").innerHTML += `<div class="order" id="${username}">
         <h3 class="username">${username}</h3>
-        <ul class="messages">
-            ${parsed_messages[username]['messages'].map((message) => `<li contentEditable="true">${message}</li>`).join("")}
-        </ul>
+        <textarea rows="${parsed_messages[username]['messages'].length + 2}" class="messages">${parsed_messages[username]['messages'].join(`\n`)}</textarea>
         </div>`;
     });
   });
 };
+
+const updateCount = () => {
+  let delivery_address = document.getElementById("delivery_address").value
+  let order_count = document.getElementById("order_list").childNodes.length
+
+  console.log(delivery_address, order_count);
+  document.getElementById("order_count").innerHTML = ` ${delivery_address} için sip. sayısı: ${order_count}`;
+}
 
 const sendToPrinterScript = (messages) => {
   printerScript.stdin.write(`${messages}\n@@END@@\n`);
@@ -57,68 +55,61 @@ const sendToPrinterScript = (messages) => {
   });
 };
 
-const startCodeFunction = () => {
-  printBoth("Initiating program: Parser");
+printBoth("Initiating program: Parser");
 
-  child = exec("python3 -i ./python/parser.py", (error) => {
-    if (error) {
-      printBoth(`Error while executing the Python executable: parser.py ${error}`);
-    }
-  });
-};
+parserScript = exec("python3 ./python/parser.py", (error, stderr) => {
+  if (error || stderr) {
+    printBoth(`Error while executing the Python executable: parser.py ${error}, ${stderr}`);
+  }
+});
 
-const startPrinterScript = () => {
-  printBoth("Initiating program: Printer");
+printBoth("Initiating program: Printer");
 
-  printerScript = exec("python3 -i ./python/printer.py", (error) => {
-    if (error) {
-      printBoth(`Error while executing the Python executable: printer.py ${error}`);
-    }
-  });
-};
+printerScript = exec("python3 ./python/printer.py", (error, stderr) => {
+  if (error) {
+    printBoth(`Error while executing the Python executable: printer.py ${error}, ${stderr}`);
+  }
+});
 
 const parseMessages = () => {
   document.getElementById("order_list").innerHTML = "Yükleniyor..";
-  startCodeFunction();
-  const stringToSend = document.getElementById("message_text").value;
-  sendToProgram(stringToSend);
 
-  stopCodeFunction();
+  const stringToSend = document.getElementById("message_text").value;
+  console.log("string to send", stringToSend)
+  sendToParser(stringToSend);
 };
 
 const printMessages = () => {
-  startPrinterScript();
   let orders = document.getElementsByClassName("order")
+  let delivery_address = document.getElementById("delivery_address").value
 
   for (order of orders) {
     let username = order.getElementsByClassName("username")[0].innerHTML;
-    let messages = order.getElementsByClassName("messages")[0].innerHTML;
-    let messagesToSend = messages.replace(/<li>/g, "").replace(/<\/li>/g, "").split("\n").filter((message) => message !== "");
-
-    printObject = {
+    let messages = order.getElementsByClassName("messages")[0].value.split('\n');
+    let printObject = {
         username: username,
-        messages: messagesToSend,
-        delivery_address: document.getElementById("delivery_address").value
+        messages: messages,
+        delivery_address: delivery_address
     }
+
+    console.log("data being sent to printer", printObject)
 
     setTimeout(function(){
       sendToPrinterScript(JSON.stringify(printObject));
-    }, 1500);
-
+    }, 750);
     }
-
-  stopPrinterScript();
 }
-
-const stopCodeFunction = () => {
-  child.stdin.end();
-};
-
-const stopPrinterScript = () => {
-  printerScript.stdin.end();
-};
 
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("parse_messages").addEventListener("click", parseMessages);
   document.getElementById("print_orders").addEventListener("click", printMessages);
+  document.getElementById("order_count").addEventListener("selectionchange", updateCount);
 });
+
+window.onbeforeunload = () => {
+  parserScript.stdin.write("terminate");
+  printerScript.stdin.write("terminate");
+
+  parserScript.stdin.end();
+  printerScript.stdin.end();
+}

@@ -4,6 +4,21 @@ body {
     background-color: #F5F5F5;
 }
 
+textarea {
+    white-space: pre;
+}
+
+.bottom-buttons {
+    display: flex;
+    flex-direction: column;
+}
+
+.controls {
+    display: flex;
+    flex-direction: row;
+    justify-items: center;
+}
+
 .container {
     display: flex;
     flex-direction: row;
@@ -20,6 +35,11 @@ body {
     align-items: center;
 }
 
+#delivery_address {
+    margin: auto;
+    margin-top: 10px;
+}
+
 .column {
     width: 50vw;
     margin: 5px;
@@ -32,11 +52,15 @@ body {
 }
 #order_list {
     height: 100vh;
-    overflow: scroll;
+    width: 45vw;
     justify-content: left;
     align-items: center;
     font-size: 12px;
     word-break: break-all;
+}
+
+.order-column {
+    overflow: scroll;
 }
 
 textarea {
@@ -54,7 +78,6 @@ h1 {
 
 input[type="text"] {
     width: 100%;
-    max-width: 300px;
     padding: 10px;
     margin: 10px 0;
     font-size: 16px;
@@ -72,9 +95,8 @@ input[type="text"]:focus {
     box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.3);
 }
 
-button {
+button, select {
     width: 100%;
-    max-width: 300px;
     background-color: #4285F4;
     color: #FFFFFF;
     padding: 10px;
@@ -88,7 +110,7 @@ button {
     transition: background-color 0.3s;
 }
 
-button:hover {
+button:hover, select:hover {
     background-color: #0754b8;
 }
 

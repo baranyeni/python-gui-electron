@@ -13,19 +13,23 @@
   <body>
     <div class="container">
       <div class="column">
-        <textarea id="message_text" placeholder="WhatsApp mesajlarını girin;">
-        </textarea>
-        <select name="delivery_address" id="delivery_address">
-          <option value="MIGROS">MIGROS</option>
-          <option value="OPTIMUM">OPTIMUM</option>
-          <option value="SETCARD">SETCARD</option>
-          <option value="D">D</option>
-          <option value="E">E</option>
-        </select>
-        <button id="parse_messages">Siparişleri listele</button>
-        <button id="print_orders">Siparişleri yazdır</button>
+        <textarea id="message_text" placeholder="WhatsApp mesajlarını girin;"></textarea>
+          <h5 id="order_count">Sipariş sayısı: </h5>
+        <div class="bottom-buttons">
+            <select name="delivery_address" id="delivery_address">
+                <option value="MIGROS">MIGROS</option>
+                <option value="OPTIMUM">OPTIMUM</option>
+                <option value="SETCARD">SETCARD</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+            </select>
+            <div class="controls">
+                <button id="parse_messages">Siparişleri listele</button>
+                <button id="print_orders">Siparişleri yazdır</button>
+            </div>
+        </div>
       </div>
-      <div class="column">
+      <div class="column order-column">
         <div id="order_list">
         </div>
       </div>
