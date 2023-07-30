@@ -22,7 +22,6 @@ const sendToParser = (str) => {
     if (data.toString().includes("Python    : ")) { return printBoth("From python: ", data) }
 
     parsed_messages = JSON.parse(data.toString('utf8'));
-    updateCount();
     document.getElementById("order_list").innerHTML = "";
 
     Object.keys(parsed_messages).forEach((username) => {
@@ -31,6 +30,8 @@ const sendToParser = (str) => {
         <textarea rows="${parsed_messages[username]['messages'].length + 2}" class="messages">${parsed_messages[username]['messages'].join(`\n`)}</textarea>
         </div>`;
     });
+
+    updateCount();
   });
 };
 
@@ -103,7 +104,7 @@ const printMessages = () => {
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("parse_messages").addEventListener("click", parseMessages);
   document.getElementById("print_orders").addEventListener("click", printMessages);
-  document.getElementById("order_count").addEventListener("selectionchange", updateCount);
+  document.getElementById("delivery_address").addEventListener("change", updateCount);
 });
 
 window.onbeforeunload = () => {
